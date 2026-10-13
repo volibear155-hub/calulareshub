@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light" data-accent="blue">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CelularHub · Compara iPhone, Galaxy y Redmi</title>
+  <meta name="description" content="Comparador de tres celulares muy conocidos: precio, materiales, batería, cámara, pros y contras, con links de compra." />
+
+  <!-- Aplica el tema guardado antes de pintar la página (evita el parpadeo) -->
+  <script>
+    (function () {
+      try {
+        var r = document.documentElement;
+        var theme = localStorage.getItem("theme");
+        var accent = localStorage.getItem("accent");
+        if (!theme) theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        r.setAttribute("data-theme", theme);
+        if (accent) r.setAttribute("data-accent", accent);
+      } catch (e) {}
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip" href="#catalogo">Saltar al catálogo</a>
+
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="logo" href="#inicio" aria-label="CelularHub, inicio">
+        <span class="logo-mark" aria-hidden="true"></span>CelularHub
+      </a>
+      <nav class="nav" aria-label="Secciones">
+        <a href="#catalogo">Catálogo</a>
+        <a href="#detalles">Pros y contras</a>
+        <a href="#comparador">Comparador</a>
+        <a href="#metodo">Cómo se calcula</a>
+      </nav>
+      <div class="tools">
+        <div class="swatches" role="group" aria-label="Color de la página">
+          <button class="swatch" data-accent="blue"   title="Océano"    aria-label="Color océano"></button>
+          <button class="swatch" data-accent="orange" title="Atardecer" aria-label="Color atardecer"></button>
+          <button class="swatch" data-accent="green"  title="Bosque"    aria-label="Color bosque"></button>
+          <button class="swatch" data-accent="violet" title="Uva"       aria-label="Color uva"></button>
+        </div>
+        <button id="btn-theme" class="icon-btn" aria-label="Cambiar a modo oscuro" title="Modo claro u oscuro">🌙</button>
+        <button id="btn-admin" class="icon-btn" aria-label="Abrir panel de administración" title="Administrar datos">⚙️</button>
+        <button id="btn-cart" class="btn btn-primary btn-sm">Carrito <span id="cart-count" class="count">0</span></button>
+      </div>
+    </div>
+  </header>
+
+  <main id="inicio">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <h1>¿Cuál celular te conviene?</h1>
+          <p class="lead">Comparamos tres celulares muy conocidos con los mismos criterios: precio, materiales, batería, cámara y años de soporte.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary btn-lg" href="#comparador">Ver la comparación</a>
+            <a class="btn btn-ghost btn-lg" href="#catalogo">Ver los celulares</a>
+          </div>
+          <p id="status" class="status" role="status">Conectando con la base de datos…</p>
+        </div>
+        <div class="stage" aria-label="Los tres celulares comparados">
+          <div id="hero-phones" class="hero-phones"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="catalogo" class="wrap section">
+      <div class="section-head">
+        <div>
+          <h2>Los tres celulares</h2>
+          <p class="muted">Precios de referencia en pesos colombianos. <span id="last-update"></span></p>
+        </div>
+      </div>
+      <div id="grid" class="grid" aria-live="polite"></div>
+    </section>
+
+    <section id="detalles" class="wrap section">
+      <div class="section-head">
+        <div>
+          <h2>Lo bueno y lo malo de cada uno</h2>
+          <p class="muted">Una ficha por celular, con sus ventajas, sus desventajas y dónde comprarlo.</p>
+        </div>
+      </div>
+      <div id="details"></div>
+    </section>
+
+    <section id="comparador" class="wrap section">
+      <div class="section-head">
+        <div>
+          <h2>Comparación lado a lado</h2>
+          <p class="muted">La celda verde es la mejor en esa fila. Las barras muestran qué tan lejos queda cada uno.</p>
+        </div>
+        <label class="priority" for="priority">
+          Lo que más me importa
+          <select id="priority">
+            <option value="equilibrado">Un poco de todo</option>
+            <option value="precio">Gastar poco</option>
+            <option value="camara">La cámara</option>
+            <option value="bateria">La batería</option>
+            <option value="rendimiento">El rendimiento</option>
+            <option value="durabilidad">Que dure muchos años</option>
+          </select>
+        </label>
+      </div>
+      <div id="verdict" class="verdict" aria-live="polite"></div>
+      <div class="table-scroll">
+        <table id="compare-table" class="compare"></table>
+      </div>
+    </section>
+
+    <section id="metodo" class="wrap section">
+      <div class="section-head">
+        <div>
+          <h2>Cómo se calcula el puntaje</h2>
+          <p class="muted">Para que la comparación se pueda explicar y defender.</p>
+        </div>
+      </div>
+      <div class="method">
+        <details open>
+          <summary>Qué mide el puntaje de 0 a 100</summary>
+          <p>Cada criterio se lleva a una escala de 0 a 1 entre los tres celulares: el mejor valor recibe 1 y el peor recibe 0. En el precio, el más barato es el mejor. Después cada criterio se multiplica por su peso y se suma. El peso cambia según lo que elijas en «Lo que más me importa».</p>
+        </details>
+        <details>
+          <summary>Qué criterios entran al puntaje</summary>
+          <p>Precio, rendimiento, calidad de cámara, batería, resistencia, valoración de usuarios, años de actualizaciones y almacenamiento. El resto de las filas (pantalla, procesador, peso) se muestran para comparar, pero no suman al puntaje.</p>
+        </details>
+        <details>
+          <summary>Por qué los megapíxeles no suman directamente</summary>
+          <p>Más megapíxeles no siempre significa mejores fotos. Por eso el puntaje usa una calificación de calidad de cámara de 0 a 10 y los megapíxeles se muestran solo como dato.</p>
+        </details>
+        <details>
+          <summary>De dónde salen los datos</summary>
+          <p>Las especificaciones son las publicadas por cada fabricante. Los puntajes de rendimiento, cámara y resistencia son valoraciones referenciales de este proyecto y se pueden cambiar en la base de datos. Los precios son aproximados: confírmalos en la tienda antes de comprar.</p>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">Proyecto universitario. Los datos se leen de MySQL y se actualizan cada 30 segundos.</div>
+  </footer>
+
+  <!-- Carrito -->
+  <aside id="cart-drawer" class="drawer" aria-hidden="true" aria-label="Carrito de compras">
+    <div class="drawer-head">
+      <h3>Tu carrito</h3>
+      <button id="cart-close" class="icon-btn" aria-label="Cerrar carrito">✕</button>
+    </div>
+    <div id="cart-items" class="drawer-body"></div>
+    <div class="drawer-foot">
+      <div class="total"><span>Total</span><strong id="cart-total">$0</strong></div>
+      <button id="cart-checkout" class="btn btn-primary">Finalizar compra (demo)</button>
+      <button id="cart-clear" class="btn btn-ghost">Vaciar carrito</button>
+    </div>
+  </aside>
+
+  <!-- Panel admin -->
+  <div id="admin-modal" class="modal" aria-hidden="true" role="dialog" aria-label="Panel de administración">
+    <div class="modal-card">
+      <div class="drawer-head">
+        <h3>Administrar datos</h3>
+        <button id="admin-close" class="icon-btn" aria-label="Cerrar panel">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="muted small">Los cambios se guardan en MySQL y se ven al instante en la página. Cada cambio de precio queda en el historial. Los pros, contras y links se editan en phpMyAdmin.</p>
+        <label class="key-field" for="admin-key">Clave de administrador
+          <input id="admin-key" type="password" autocomplete="off" placeholder="La que definiste en config.php" />
+        </label>
+        <div class="table-scroll">
+          <table class="admin-table" id="admin-table"></table>
+        </div>
+        <p id="admin-msg" class="small" role="status"></p>
+      </div>
+    </div>
+  </div>
+
+  <div id="overlay" class="overlay"></div>
+  <div id="toast" class="toast" role="status"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
